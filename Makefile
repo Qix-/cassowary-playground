@@ -1,4 +1,4 @@
-.PHONY: all clean serve
+.PHONY: all clean serve npm
 
 all: www/index.html www/cpg.js www/cpg.wasm
 
@@ -7,6 +7,9 @@ clean:
 
 serve:
 	npx serve www
+
+npm:
+	npm i
 
 www/index.html: index.html
 	@mkdir -p www
@@ -20,5 +23,5 @@ www/cpg.wasm: target/wasm32-unknown-unknown/release/cassowary_playground.wasm
 	@mkdir -p www
 	cp "$<" "$@"
 
-target/wasm32-unknown-unknown/release/cassowary_playground.wasm: ./src/lib.rs Cargo.toml Cargo.lock
+target/wasm32-unknown-unknown/release/cassowary_playground.wasm: ./src/lib.rs Cargo.toml
 	cargo build --target wasm32-unknown-unknown --release
