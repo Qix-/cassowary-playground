@@ -34,7 +34,7 @@ It's all really bad.
 
 ## Building
 
-You'll need `npm`, `node` and `cargo` with a suitably recent toolchain and the `wasm-unknown-unknown`
+You'll need `npm`, `node` and `cargo` with a suitably recent toolchain and the `wasm32-unknown-unknown`
 target installed.
 
 Then run `make` and serve the `/www/` directory that is generated.
