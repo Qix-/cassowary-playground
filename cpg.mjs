@@ -1,6 +1,34 @@
 import { CodeJar } from "codejar";
 import PEG from "peggy";
 
+const DEFAULT_CONTENTS = `
+# Welcome to the Cassowary Playground!
+# For more information, see https://github.com/qix-/cassowary-playground.
+
+# To define a variable...
+var foo            # a variable...
+var bar 10         # ... with a suggested value (default strength)
+var baz 42 !strong # ... with a strength override
+
+# To set the default strength for all SUBSEQUENT variables/constraints:
+use !req    # 1001001000.0
+use !strong # 1000000.0
+use !med    # 1000.0 (the default)
+use !weak   # 1.0
+use !12.34  # (custom value)
+
+# Note that numerals support _ or ' separators (purely cosmetic)
+var qix 1_337.8'675'309
+
+# Constraints live on their own lines; variable values update live,
+# next to their declarations.
+foo == 2 * bar + baz
+var buzz
+
+# Constraints may also have strength suffixes
+buzz + qix == foo / 2 - bar !strong
+`.trim();
+
 const grammar = `
 {
 	const $ = options;
@@ -254,16 +282,16 @@ const parser = PEG.generate(grammar);
 
 const root = document.getElementById("root");
 
-const oldContents = sessionStorage.getItem("constraint-spec");
-if (oldContents) {
-	try {
-		root.innerHTML = "";
-		root.appendChild(document.createTextNode(JSON.parse(oldContents)));
-	} catch (err) {
-		console.warn("failed to load saved state:", err);
-		console.warn("old state:");
-		console.warn(oldContents);
-	}
+const oldContents =
+	sessionStorage.getItem("constraint-spec") || DEFAULT_CONTENTS;
+
+try {
+	root.innerHTML = "";
+	root.appendChild(document.createTextNode(oldContents));
+} catch (err) {
+	console.warn("failed to load saved state:", err);
+	console.warn("old state:");
+	console.warn(oldContents);
 }
 
 const jarOptions = {
@@ -284,7 +312,7 @@ const highlight = (editor) => {
 	let code = editor.textContent;
 	let formatted;
 
-	sessionStorage.setItem("constraint-spec", JSON.stringify(code));
+	sessionStorage.setItem("constraint-spec", code);
 
 	try {
 		if (API) {
